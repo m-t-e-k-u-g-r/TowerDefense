@@ -1,14 +1,7 @@
 namespace Game.Field.Tiles;
 
-public abstract class Tile
+public abstract class Tile(int x, int y)
 {
-    public int xPosition { get; }
-    public int yPosition { get; }
-    public Position position => new Position(xPosition, yPosition);
-
-    public Tile(int x, int y)
-    {
-        xPosition = x;
-        yPosition = y;
-    }
+    public int XPosition { get; } = x;
+    public int YPosition { get; } = y;
 }

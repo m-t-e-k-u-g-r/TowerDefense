@@ -1,8 +1,5 @@
 namespace Game.Field.Tiles;
 
-public class PathTile : Tile
+public class PathTile(int x, int y) : Tile(x, y)
 {
-    public PathTile(int x, int y) : base(x, y)
-    {
-    }
 }

@@ -2,16 +2,9 @@ namespace Game.Waves;
 
 using Entities.Enemy;
 
-public class SpawnGroup
+public class SpawnGroup(EnemyType type, int enemyCount)
 {
-    public EnemyType type { get; }
-    public int enemyCount { get; }
-    public int spawnCount { get; set; }
-
-    public SpawnGroup(EnemyType type, int enemyCount)
-    {
-        this.type = type;
-        this.enemyCount = enemyCount;
-        spawnCount = 0;
-    }
+    public EnemyType Type { get; } = type;
+    public int EnemyCount { get; } = enemyCount;
+    public int SpawnCount { get; set; }
 }

@@ -5,26 +5,17 @@ using Entities.Enemy;
 using Field;
 using Waves;
 
-public class Game
+public class Game(Field field,  Wave[] waves)
 {
     private const int TickRate = 20;
-    private Field field;
-    private Wave[] waves;
-    private List<Enemy> enemies = [];
-
-    public Game(Field field,  Wave[] waves)
-    {
-        this.field = field;
-        this.waves = waves;
-    }
+    private readonly List<Enemy> _enemies = [];
 
     public void Start()
     {
         Console.WriteLine("Starting Game...");
-        field.Print();
-        foreach (Wave wave in waves)
+        foreach (var wave in waves)
         {
-            while (wave.duration > wave.timer || enemies.Count > 0)
+            while (wave.Duration > wave.Timer || _enemies.Count > 0)
             {
                 Update(wave);
                 Thread.Sleep(1000 / TickRate);
@@ -35,41 +26,39 @@ public class Game
 
     private void Update(Wave wave)
     {
-        float deltaTime = (float)1 / TickRate;
-        List<SpawnRequest> requests = wave.Update(deltaTime);
-        foreach (SpawnRequest request in requests)
+        const float deltaTime = (float)1 / TickRate;
+        var requests = wave.Update(deltaTime);
+        foreach (var request in requests)
         {
-            for (int i = 0; i < request.count; i++)
+            for (var i = 0; i < request.Count; i++)
             {
-                Path path = field.paths[Random.Shared.Next(0, field.paths.Length)];
-                Enemy enemy = new Enemy(request.type, path);
+                var path = field.Paths[Random.Shared.Next(0, field.Paths.Length)];
+                var enemy = new Enemy(request.Type, path);
                 enemy.OnDefeat += OnEnemyDefeat;
                 enemy.OnReach += OnEnemyHit;
-                enemies.Add(enemy);
+                _enemies.Add(enemy);
             }
         }
 
-        if (enemies.Count > 0)
+        if (_enemies.Count <= 0) {}
+        foreach (var enemy in _enemies.ToList())
         {
-            foreach (Enemy enemy in enemies.ToList())
-            {
-                enemy.Update(deltaTime);
-            }
+            enemy.Update(deltaTime);
+        }
 
-            List<Tower> towers = field.GetTowerTiles()
-                .Select(t => t.tower)
-                .OfType<Tower>()
-                .ToList();
-            foreach (Tower tower in towers.ToList())
-            {
-                tower.Update(deltaTime, enemies);
-            }
+        var towers = field.GetTowerTiles()
+            .Select(t => t.Tower)
+            .OfType<Tower>()
+            .ToList();
+        foreach (var tower in towers.ToList())
+        {
+            tower.Update(deltaTime, _enemies);
         }
     }
 
     private void OnEnemyDefeat(Enemy enemy)
     {
-        enemies.Remove(enemy);
+        _enemies.Remove(enemy);
     }
 
     private static void OnEnemyHit(Enemy enemy)

@@ -1,13 +1,7 @@
 namespace Game.Field;
 
-public class Position
+public class Position(double x, double y)
 {
-    public double xPos { get; }
-    public double yPos { get; }
-
-    public Position(double x, double y)
-    {
-        this.xPos = x;
-        this.yPos = y;
-    }
+    public double XPos { get; } = x;
+    public double YPos { get; } = y;
 }

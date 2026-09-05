@@ -1,15 +1,8 @@
 namespace Game.Entities.Enemy;
 
-public class EnemyType
+public class EnemyType(int maxHealth, float moveSpeed, float evasion)
 {
-    public int maxHealth { get; }
-    public float moveSpeed { get; }
-    public float evasion { get; }
-
-    public EnemyType(int maxHealth, float moveSpeed, float evasion)
-    {
-        this.maxHealth = maxHealth;
-        this.moveSpeed = moveSpeed;
-        this.evasion = evasion;
-    }
+    public int MaxHealth { get; } = maxHealth;
+    public float MoveSpeed { get; } = moveSpeed;
+    public float Evasion { get; } = evasion;
 }

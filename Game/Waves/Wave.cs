@@ -1,32 +1,24 @@
 namespace Game.Waves;
 
-public class Wave
+public class Wave(int duration, SpawnGroup[] groups)
 {
-    public int duration { get; }
-    public float timer { get; private set; }
-    private SpawnGroup[] Groups;
-
-    public Wave(int duration, SpawnGroup[] groups)
-    {
-        this.duration = duration;
-        timer = 0;
-        Groups = groups;
-    }
+    public int Duration { get; } = duration;
+    public float Timer { get; private set; }
 
     public List<SpawnRequest> Update(float deltaTime)
     {
         List<SpawnRequest> requests = [];
-        timer += deltaTime;
-        foreach (var group in Groups)
+        Timer += deltaTime;
+        foreach (var group in groups)
         {
-            if (group.spawnCount >= group.enemyCount) { continue; }
+            if (group.SpawnCount >= group.EnemyCount) { continue; }
 
-            int enemiesToHaveBeenSpawned = (int)Math.Floor(group.enemyCount * (timer / duration));
+            var enemiesToHaveBeenSpawned = (int)Math.Floor(group.EnemyCount * (Timer / Duration));
             requests.Add(new SpawnRequest(
-                group.type, 
-                enemiesToHaveBeenSpawned - group.spawnCount
+                group.Type, 
+                enemiesToHaveBeenSpawned - group.SpawnCount
             ));
-            group.spawnCount = enemiesToHaveBeenSpawned;
+            group.SpawnCount = enemiesToHaveBeenSpawned;
         }
 
         return requests;

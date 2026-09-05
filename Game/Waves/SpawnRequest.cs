@@ -2,14 +2,8 @@ using Game.Entities.Enemy;
 
 namespace Game.Waves;
 
-public class SpawnRequest
+public class SpawnRequest(EnemyType type, int count)
 {
-    public EnemyType type { get; }
-    public int count { get; }
-
-    public SpawnRequest(EnemyType type, int count)
-    {
-        this.type = type;
-        this.count = count;
-    }
+    public EnemyType Type { get; } = type;
+    public int Count { get; } = count;
 }

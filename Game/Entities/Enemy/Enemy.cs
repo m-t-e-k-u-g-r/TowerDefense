@@ -2,54 +2,41 @@ namespace Game.Entities.Enemy;
 
 using Field;
 
-public class Enemy
+public class Enemy(EnemyType type, Path path)
 {
-    private EnemyType type;
-    public float health { get; private set; }
-    private Path path;
-    private int pathIndex;
-    private float progress;
-    public float PathProgress => path.GetPathProgress(pathIndex);
-    public Position Position => path.GetPosition(pathIndex, progress);
+    public float Health { get; private set; } = type.MaxHealth;
+    private int _pathIndex;
+    private float _progress;
+    public float PathProgress => path.GetPathProgress(_pathIndex);
+    public Position Position => path.GetPosition(_pathIndex, _progress);
 
     public event Action<Enemy> OnDefeat;
     public event Action<Enemy> OnReach;
-
-    public Enemy(EnemyType type, Path path)
-    {
-        this.type = type;
-        health = type.maxHealth;
-        this.path = path;
-        pathIndex = 0;
-        progress = 0;
-    }
 
     public void Update(float deltaTime)
     {
         Move(deltaTime);
     }
 
-    void Move(float deltaTime)
+    private void Move(float deltaTime)
     {
-        float newProgress = progress + type.moveSpeed * deltaTime;
-        int movedForward = (int)Math.Floor(newProgress);
-        progress = newProgress - movedForward;
-        pathIndex += movedForward;
-        if (pathIndex >= path.tiles.Length)
+        var newProgress = _progress + type.MoveSpeed * deltaTime;
+        var movedForward = (int)Math.Floor(newProgress);
+        _progress = newProgress - movedForward;
+        _pathIndex += movedForward;
+        if (_pathIndex >= path.Tiles.Length)
         {
-            OnReach?.Invoke(this);
+            OnReach.Invoke(this);
         }
     }
 
     public void ReceiveDamage(float damage)
     {
-        if (Random.Shared.NextDouble() > type.evasion)
+        if (Random.Shared.NextDouble() < type.Evasion) return;
+        Health -= damage;
+        if (Health <= 0)
         {
-            health -= damage;
-            if (health <= 0)
-            {
-                OnDefeat?.Invoke(this);
-            }
+            OnDefeat.Invoke(this);
         }
     }
 }
