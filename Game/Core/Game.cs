@@ -2,17 +2,28 @@ namespace Game.Core;
 
 using Entities;
 using Entities.Enemy;
+using Entities.Error;
 using Entities.Tower;
 using Field;
 using Waves;
 
-public class Game(Field field,  Wave[] waves)
+public class Game(Field field, TowerType[] towerTypes, Wave[] waves)
 {
+    public float Damage;
+    private readonly List<Enemy> _enemies = [];
+    public List<Enemy> Enemies => _enemies;
     public readonly Field Field = field;
-    private const int TickRate = 20;
+    private int _gold;
+    public int Gold => _gold;
+    public int Kills;
+    public bool Paused;
+    public int RuntimeMs;
+    public int Spawns;
+    public const int TickRate = 20;
+    public TowerType[] TowerTypes => towerTypes;
+    private TowerType? GetTowerType(int id) { return TowerTypes.FirstOrDefault(t => t.Id == id); }
     public Wave[] Waves => waves;
     public Wave? Wave;
-    private readonly List<Enemy> _enemies = [];
 
     public void Start()
     {
@@ -31,6 +42,7 @@ public class Game(Field field,  Wave[] waves)
     private void Update(Wave wave)
     {
         const float deltaTime = (float)1 / TickRate;
+        RuntimeMs += (int)MathF.Round(deltaTime * 1000);
         var requests = wave.Update(deltaTime);
         foreach (var request in requests)
         {
@@ -39,9 +51,11 @@ public class Game(Field field,  Wave[] waves)
                 var path = Field.Paths[Random.Shared.Next(0, Field.Paths.Length)];
                 var enemy = new Enemy(request.Type, path);
                 enemy.OnDefeat += OnEnemyDefeat;
+                enemy.OnHit += OnEnemyDamage;
                 enemy.OnReach += OnEnemyHit;
                 _enemies.Add(enemy);
             }
+            Spawns += request.Count;
         }
 
         foreach (var enemy in _enemies.ToList()) { enemy.Update(deltaTime); }
@@ -58,8 +72,12 @@ public class Game(Field field,  Wave[] waves)
 
     private void OnEnemyDefeat(Enemy enemy)
     {
+        _gold += enemy.Type.Reward;
         _enemies.Remove(enemy);
+        Kills++;
     }
+
+    private void OnEnemyDamage(float damage) { Damage += damage; }
 
     private static void OnEnemyHit(Enemy enemy)
     {

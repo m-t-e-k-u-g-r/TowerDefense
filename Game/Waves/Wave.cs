@@ -1,7 +1,8 @@
 namespace Game.Waves;
 
-public class Wave(int duration, SpawnGroup[] groups)
+public class Wave(string name, int duration, SpawnGroup[] groups)
 {
+    public string Name => name;
     public int Duration { get; } = duration;
     public float Timer { get; private set; }
 
