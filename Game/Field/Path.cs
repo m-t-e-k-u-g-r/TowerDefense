@@ -1,5 +1,3 @@
-using Game.Entities;
-
 namespace Game.Field;
 
 using Tiles;
@@ -18,20 +16,20 @@ public class Path(PathTile[] pathTiles)
         var tile = Tiles[pathIndex];
         if (pathIndex >= Tiles.Length - 1)
         {
-            return new Position(tile.XPosition, tile.YPosition);
+            return new Position(tile.Position.XPos, tile.Position.YPos);
         }
         var nextTile = Tiles[pathIndex + 1];
         float x;
         float y;
-        if (tile.XPosition == nextTile.XPosition)
+        if (tile.Position.XPos == nextTile.Position.XPos)
         {
-            x = tile.XPosition;
-            y = tile.YPosition + progress * (nextTile.YPosition - tile.YPosition);
+            x = tile.Position.XPos;
+            y = tile.Position.YPos + progress * (nextTile.Position.YPos - tile.Position.YPos);
         }
         else
         {
-            y = tile.YPosition;
-            x = tile.XPosition + progress * (nextTile.XPosition - tile.XPosition);
+            y = tile.Position.YPos;
+            x = tile.Position.XPos + progress * (nextTile.Position.XPos - tile.Position.XPos);
         }
         return new Position(x, y);
     }
