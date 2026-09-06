@@ -8,11 +8,10 @@ using Field;
 using Models;
 using System;
 
-public class InputHandler(Game game)
+public class InputHandler(Game game, ErrorHandler errorHandler)
 {
     private readonly InputState _inputState = new();
     public InputState InputState => _inputState;
-    private readonly ErrorHandler _errorHandler = new();
 
     public void HandleInput()
     {
@@ -74,7 +73,7 @@ public class InputHandler(Game game)
         };
         var error = result.Error;
         if (result.IsSuccess) { Console.WriteLine("Tower placed"); }
-        if (error != null) _errorHandler.HandleError(error);
+        if (error != null) errorHandler.HandleError(error, TimeSpan.FromSeconds(3));
     }
 
     private Result<Tower> TryPlacingTower(InputState inputState, TilePosition position)
