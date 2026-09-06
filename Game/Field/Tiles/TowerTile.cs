@@ -1,6 +1,6 @@
 namespace Game.Field.Tiles;
 
-using Entities;
+using Entities.Tower;
 
 public class TowerTile(int x, int y) : Tile(x, y)
 {

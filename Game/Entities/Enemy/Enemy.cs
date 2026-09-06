@@ -4,6 +4,7 @@ using Field;
 
 public class Enemy(EnemyType type, Path path)
 {
+    public readonly EnemyType Type = type;
     public float Health { get; private set; } = type.MaxHealth;
     private int _pathIndex;
     private float _progress;
@@ -11,6 +12,7 @@ public class Enemy(EnemyType type, Path path)
     public Position Position => path.GetPosition(_pathIndex, _progress);
 
     public event Action<Enemy> OnDefeat;
+    public event Action<float> OnHit;
     public event Action<Enemy> OnReach;
 
     public void Update(float deltaTime)
@@ -20,7 +22,7 @@ public class Enemy(EnemyType type, Path path)
 
     private void Move(float deltaTime)
     {
-        var newProgress = _progress + type.MoveSpeed * deltaTime;
+        var newProgress = _progress + Type.MoveSpeed * deltaTime;
         var movedForward = (int)Math.Floor(newProgress);
         _progress = newProgress - movedForward;
         _pathIndex += movedForward;
@@ -32,8 +34,9 @@ public class Enemy(EnemyType type, Path path)
 
     public void ReceiveDamage(float damage)
     {
-        if (Random.Shared.NextDouble() < type.Evasion) return;
+        if (Random.Shared.NextDouble() < Type.Evasion) return;
         Health -= damage;
+        OnHit.Invoke(damage);
         if (Health <= 0)
         {
             OnDefeat.Invoke(this);

@@ -2,12 +2,16 @@ namespace Game.Core;
 
 using Entities;
 using Entities.Enemy;
+using Entities.Tower;
 using Field;
 using Waves;
 
 public class Game(Field field,  Wave[] waves)
 {
+    public readonly Field Field = field;
     private const int TickRate = 20;
+    public Wave[] Waves => waves;
+    public Wave? Wave;
     private readonly List<Enemy> _enemies = [];
 
     public void Start()
@@ -32,7 +36,7 @@ public class Game(Field field,  Wave[] waves)
         {
             for (var i = 0; i < request.Count; i++)
             {
-                var path = field.Paths[Random.Shared.Next(0, field.Paths.Length)];
+                var path = Field.Paths[Random.Shared.Next(0, Field.Paths.Length)];
                 var enemy = new Enemy(request.Type, path);
                 enemy.OnDefeat += OnEnemyDefeat;
                 enemy.OnReach += OnEnemyHit;
@@ -40,13 +44,9 @@ public class Game(Field field,  Wave[] waves)
             }
         }
 
-        if (_enemies.Count <= 0) {}
-        foreach (var enemy in _enemies.ToList())
-        {
-            enemy.Update(deltaTime);
-        }
+        foreach (var enemy in _enemies.ToList()) { enemy.Update(deltaTime); }
 
-        var towers = field.GetTowerTiles()
+        var towers = Field.GetTowerTiles()
             .Select(t => t.Tower)
             .OfType<Tower>()
             .ToList();
