@@ -1,7 +1,8 @@
 namespace Game.Entities.Enemy;
 
-public class EnemyType(int maxHealth, float moveSpeed, float evasion, int reward)
+public class EnemyType(string id, int maxHealth, float moveSpeed, float evasion, int reward)
 {
+    public string Id { get; } = id;
     public int MaxHealth { get; } = maxHealth;
     public float MoveSpeed { get; } = moveSpeed;
     public float Evasion { get; } = evasion;
