@@ -13,9 +13,9 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
     private readonly InputState _inputState = new();
     public InputState InputState => _inputState;
 
-    public void HandleInput()
+    public bool HandleInput()
     {
-        if (!Console.KeyAvailable) return;
+        if (!Console.KeyAvailable) return false;
         var keyInfo = Console.ReadKey(true);
         try
         {
@@ -30,8 +30,14 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
                 case ConsoleKey.Spacebar:
                     game.Paused = !game.Paused;
                     break;
+                case ConsoleKey.F:
+                    _inputState.Sleep = !_inputState.Sleep;
+                    break;
                 case ConsoleKey.Q:
                     Environment.Exit(0);
+                    break;
+                case ConsoleKey.V:
+                    _inputState.View = _inputState.View.Next();
                     break;
                 case ConsoleKey.P:
                     _inputState.Mode = Mode.Placement;
@@ -64,6 +70,7 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
                     break;
             }
         }
+        return true;
     }
 
     private void HandleTowerAction(InputState inputState)

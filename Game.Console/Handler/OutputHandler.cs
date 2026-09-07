@@ -1,8 +1,8 @@
-using Game.Entities.Error;
-
 namespace Game.Console.Handler;
 
 using Core;
+using Field;
+using Field.Tiles;
 using Models;
 using System;
 
@@ -11,7 +11,78 @@ public class OutputHandler
     public void Render(Game game, InputState inputState)
     {
         Console.Clear();
+        Console.WriteLine("Running: {0}", !game.Paused);
+        switch (inputState.View)
+        {
+            case View.Stats:
+                ViewStats(game, inputState);
+                break;
+            case View.Board:
+                var enemyPositions = game.Enemies
+                    .Select(e => e.Position)
+                    .ToList();
+                ViewBoard(game.Field.Tiles, game.Field.Paths, inputState.TowerPosition, enemyPositions);
+                break;
+        }
+    }
 
+    private static void ViewBoard(Tile[,] tiles, Path[] paths, TilePosition selectedPosition, List<Position> enemyPositions)
+    {
+        // Display coordinates of selected position
+        Console.WriteLine("Selected position: ({0}, {1})", selectedPosition.XPos, selectedPosition.YPos);
+        var selectedTile = tiles[selectedPosition.XPos, selectedPosition.YPos];
+        var selectedType = selectedTile.GetType().Name;
+        // Display tile type of selected position
+        Console.WriteLine("Type: {0}", selectedType);
+        if (selectedTile is TowerTile tt && tt.Tower != null)
+        {
+            // Optionally display Tower type and level
+            Console.WriteLine("{0} Level: {1}", tt.Tower.Type.Name, tt.Tower.Level);
+        };
+
+        // Draw board itself
+        for (var y = 0; y < tiles.GetLength(0); y++)
+        {
+            for (var x = 0; x < tiles.GetLength(1); x++)
+            {
+                if (selectedPosition.XPos == x && selectedPosition.YPos == y)
+                {
+                    // Highlight selected position
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.Write("[X]");
+                    Console.ResetColor();
+                    continue;
+                }
+                var tile = tiles[x, y];
+                switch (tile)
+                {
+                    case PathTile pathTile:
+                        // Highlight path tiles with different colors
+                        var path = paths.First(p => p.IsPartOfPath(pathTile.Position));
+                        Console.ForegroundColor = path.Color;
+                        Console.Write("[P]");
+                        Console.ResetColor();
+                        break;
+                    case TowerTile towerTile:
+                        if (towerTile.Tower == null)
+                        {
+                            // Display empty tower tile
+                            Console.Write("[ ]");
+                            break;
+                        }
+                        // Display tile with tower
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.Write("{0}", "[T]");
+                        Console.ResetColor();
+                        break;
+                }
+            }
+            Console.WriteLine();
+        }
+    }
+
+    private static void ViewStats(Game game, InputState inputState)
+    {
         Console.WriteLine("{0}", game.Wave?.Name);
         Console.WriteLine();
 

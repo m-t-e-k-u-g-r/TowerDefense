@@ -5,6 +5,8 @@ using Field;
 public class InputState
 {
     public Mode? Mode { get; set; }
+    public View View { get; set; } = View.Stats;
     public int? TowerId { get; set; }
+    public bool Sleep { get; set; } = true;
     public TilePosition TowerPosition { get; } = new(0, 0);
 }
