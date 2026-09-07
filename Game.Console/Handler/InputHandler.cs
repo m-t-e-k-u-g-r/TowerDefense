@@ -40,18 +40,22 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
                     _inputState.Mode = Mode.Upgrade;
                     break;
                 case ConsoleKey.UpArrow:
+                case ConsoleKey.W:
                     if (_inputState.TowerPosition.YPos > 0)
                         _inputState.TowerPosition.YPos--;
                     break;
                 case ConsoleKey.DownArrow:
+                case ConsoleKey.S:
                     if (_inputState.TowerPosition.YPos < game.Field.Height - 1)
                         _inputState.TowerPosition.YPos++;
                     break;
                 case ConsoleKey.LeftArrow:
+                case ConsoleKey.A:
                     if (_inputState.TowerPosition.XPos > 0)
                         _inputState.TowerPosition.XPos--;
                     break;
                 case ConsoleKey.RightArrow:
+                case ConsoleKey.D:
                     if (_inputState.TowerPosition.XPos < game.Field.Width - 1)
                         _inputState.TowerPosition.XPos++;
                     break;
