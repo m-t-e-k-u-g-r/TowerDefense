@@ -16,14 +16,20 @@ public class GameRunner
             while (wave.Duration > wave.Timer || game.Enemies.Count > 0)
             {
                 if (game.Error != null && DateTime.UtcNow >= game.ErrorExpiresAt) { errorHandler.ClearError(); }
-                inputHandler.HandleInput();
-                if (!game.Paused) { game.Update(wave); }
+                var inputReceived = inputHandler.HandleInput();
+                if (!game.Paused)
+                {
+                    game.Update(wave);
+                }
+                if (inputReceived || !game.Paused)
+                {
+                    outputHandler.Render(game, inputHandler.InputState);
+                }
 
-                outputHandler.Render(game, inputHandler.InputState);
-                Thread.Sleep(1000 / Game.TickRate);
+                if (inputHandler.InputState.Sleep) Thread.Sleep(1000 / Game.TickRate);
             }
             Console.WriteLine("{0} completed!", wave.Name);
-            Thread.Sleep(5000);
+            if (inputHandler.InputState.Sleep) Thread.Sleep(3000);
         }
         Console.WriteLine("Game won!");
     }
