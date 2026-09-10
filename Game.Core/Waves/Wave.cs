@@ -1,4 +1,4 @@
-namespace Game.Waves;
+namespace Game.Core.Waves;
 
 public class Wave(string name, int duration, SpawnGroup[] groups)
 {

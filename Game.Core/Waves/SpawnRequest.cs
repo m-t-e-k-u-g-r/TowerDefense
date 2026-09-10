@@ -1,6 +1,6 @@
-using Game.Entities.Enemy;
+namespace Game.Core.Waves;
 
-namespace Game.Waves;
+using Entities.Enemy;
 
 public class SpawnRequest(EnemyType type, int count)
 {

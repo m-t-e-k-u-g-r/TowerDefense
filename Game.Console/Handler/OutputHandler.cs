@@ -1,8 +1,8 @@
 namespace Game.Console.Handler;
 
-using Core;
-using Field;
-using Field.Tiles;
+using Core.Field;
+using Core.Field.Tiles;
+using Core.Logic;
 using Models;
 using System;
 

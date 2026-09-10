@@ -1,10 +1,11 @@
-namespace Game.Field;
+namespace Game.Core.Field;
 
 using Tiles;
 
-public class Path(PathTile[] pathTiles)
+public class Path(PathTile[] pathTiles, ConsoleColor color)
 {
     public PathTile[] Tiles { get; } = pathTiles;
+    public ConsoleColor Color { get; set; } = color;
 
     public float GetPathProgress(int pathIndex)
     {
@@ -32,5 +33,10 @@ public class Path(PathTile[] pathTiles)
             x = tile.Position.XPos + progress * (nextTile.Position.XPos - tile.Position.XPos);
         }
         return new Position(x, y);
+    }
+
+    public bool IsPartOfPath(TilePosition position)
+    {
+        return Tiles.Any(tile => tile.Position == position);
     }
 }

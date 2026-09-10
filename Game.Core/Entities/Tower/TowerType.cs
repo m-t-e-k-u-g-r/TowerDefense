@@ -1,4 +1,4 @@
-namespace Game.Entities.Tower;
+namespace Game.Core.Entities.Tower;
 
 public class TowerType(int id, string name, TowerLevel[] levels)
 {

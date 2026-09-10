@@ -1,6 +1,6 @@
 ﻿namespace Game.Console;
 
-using Core;
+using Core.Logic;
 using Handler;
 
 public static class Program

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Game.Console.Models.Config;
 
-using Field;
+using Core.Field;
 
 public record ConfigTower
 {

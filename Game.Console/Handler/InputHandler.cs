@@ -1,10 +1,10 @@
 namespace Game.Console.Handler;
 
-using Core;
-using Entities;
-using Entities.Error;
-using Entities.Tower;
-using Field;
+using Core.Entities;
+using Core.Entities.Error;
+using Core.Entities.Tower;
+using Core.Field;
+using Core.Logic;
 using Models;
 using System;
 

@@ -1,3 +1,3 @@
-namespace Game.Entities.Error;
+namespace Game.Core.Entities.Error;
 
 public record GameError(GameErrorCode Code, string Message);

@@ -1,4 +1,4 @@
-namespace Game.Core;
+namespace Game.Core.Logic;
 
 using Entities;
 using Entities.Enemy;

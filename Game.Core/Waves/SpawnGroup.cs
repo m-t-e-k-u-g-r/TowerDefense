@@ -1,4 +1,4 @@
-namespace Game.Waves;
+namespace Game.Core.Waves;
 
 using Entities.Enemy;
 

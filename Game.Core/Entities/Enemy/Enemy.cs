@@ -1,4 +1,4 @@
-namespace Game.Entities.Enemy;
+namespace Game.Core.Entities.Enemy;
 
 using Field;
 

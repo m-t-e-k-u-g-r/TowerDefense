@@ -1,6 +1,6 @@
-using Game.Entities.Error;
+namespace Game.Core.Entities;
 
-namespace Game.Entities;
+using Error;
 
 public record Result<T>(T? Value, GameError? Error)
 {

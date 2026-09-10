@@ -1,7 +1,7 @@
 namespace Game.Console.Handler;
 
-using Core;
-using Entities.Error;
+using Core.Entities.Error;
+using Core.Logic;
 
 public class ErrorHandler(Game game)
 {

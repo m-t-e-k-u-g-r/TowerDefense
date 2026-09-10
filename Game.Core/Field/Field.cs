@@ -1,6 +1,6 @@
-using Game.Field.Tiles;
+namespace Game.Core.Field;
 
-namespace Game.Field;
+using Tiles;
 
 public class Field(Tile[,] tiles, Path[] paths)
 {

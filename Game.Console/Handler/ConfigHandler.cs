@@ -1,10 +1,9 @@
-using Game.Entities.Error;
-
 namespace Game.Console.Handler;
 
-using Entities;
-using Entities.Enemy;
-using Entities.Tower;
+using Core.Entities;
+using Core.Entities.Enemy;
+using Core.Entities.Error;
+using Core.Entities.Tower;
 using Models.Config;
 using Newtonsoft.Json;
 
