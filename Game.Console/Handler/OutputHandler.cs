@@ -10,69 +10,120 @@ public class OutputHandler
 {
     public void Render(Game game, InputState inputState)
     {
+        var selectedPosition = inputState.TowerPosition;
+        var tiles = game.Field.Tiles;
+        var selectedTile = tiles[selectedPosition.XPos, selectedPosition.YPos];
+
         Console.Clear();
-        Console.WriteLine("Running: {0}", !game.Paused);
+
+        // Header
+        Console.WriteLine("========================================");
+        Console.WriteLine("              TOWER DEFENSE             ");
+        Console.WriteLine("========================================");
+        Console.WriteLine($"Status : {(game.Paused ? "Paused" : "Running")}");
+        Console.WriteLine($"Mode   : {inputState.Mode}");
+        Console.WriteLine();
+
+        // Selection information
+        Console.WriteLine("----------------------------------------");
+        Console.WriteLine("SELECTED");
+        Console.WriteLine("----------------------------------------");
+        Console.WriteLine(
+            $"Position : ({selectedPosition.XPos}, {selectedPosition.YPos})");
+        Console.WriteLine($"Tile     : {selectedTile.GetType().Name}");
+
+        if (selectedTile is TowerTile towerTile && towerTile.Tower != null)
+        {
+            Console.WriteLine($"Tower    : {towerTile.Tower.Type.Name}");
+            Console.WriteLine($"Level    : {towerTile.Tower.Level}");
+        }
+
+        var selectedTower = game.TowerTypes
+            .FirstOrDefault(t => t.Id == inputState.TowerId);
+
+        Console.WriteLine($"Building : {selectedTower?.Name ?? "None"}");
+        Console.WriteLine();
+
+        // Main view
+        Console.WriteLine("----------------------------------------");
+
         switch (inputState.View)
         {
             case View.Stats:
-                ViewStats(game, inputState);
+                Console.WriteLine("STATISTICS");
+                Console.WriteLine("----------------------------------------");
+                ViewStats(game);
                 break;
+
             case View.Board:
-                var enemyPositions = game.Enemies
-                    .Select(e => e.Position)
-                    .ToList();
-                ViewBoard(game.Field.Tiles, game.Field.Paths, inputState.TowerPosition, enemyPositions);
+                Console.WriteLine("BOARD");
+                Console.WriteLine("----------------------------------------");
+
+                ViewBoard(tiles, game.Field.Paths, selectedPosition);
+
+                Console.WriteLine();
+                Console.WriteLine("Legend: [P] Path  [T] Tower  [ ] Empty  [X] Selected");
                 break;
+        }
+
+        // Game information
+        if (!string.IsNullOrWhiteSpace(game.GameInfo))
+        {
+            Console.WriteLine();
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine("INFO");
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine(game.GameInfo.Trim());
+        }
+
+        // Error information
+        if (game.Error != null)
+        {
+            Console.WriteLine();
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine("ERROR");
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine(game.Error.Message);
         }
     }
 
-    private static void ViewBoard(Tile[,] tiles, Path[] paths, TilePosition selectedPosition, List<Position> enemyPositions)
+    private static void ViewBoard(Tile[,] tiles, Path[] paths, TilePosition selectedPosition)
     {
-        // Display coordinates of selected position
-        Console.WriteLine("Selected position: ({0}, {1})", selectedPosition.XPos, selectedPosition.YPos);
-        var selectedTile = tiles[selectedPosition.XPos, selectedPosition.YPos];
-        var selectedType = selectedTile.GetType().Name;
-        // Display tile type of selected position
-        Console.WriteLine("Type: {0}", selectedType);
-        if (selectedTile is TowerTile tt && tt.Tower != null)
+        for (var y = 0; y < tiles.GetLength(1); y++)
         {
-            // Optionally display Tower type and level
-            Console.WriteLine("{0} Level: {1}", tt.Tower.Type.Name, tt.Tower.Level);
-        };
-
-        // Draw board itself
-        for (var y = 0; y < tiles.GetLength(0); y++)
-        {
-            for (var x = 0; x < tiles.GetLength(1); x++)
+            for (var x = 0; x < tiles.GetLength(0); x++)
             {
-                if (selectedPosition.XPos == x && selectedPosition.YPos == y)
+                if (selectedPosition.XPos == x &&
+                    selectedPosition.YPos == y)
                 {
-                    // Highlight selected position
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.Write("[X]");
                     Console.ResetColor();
                     continue;
                 }
+
                 var tile = tiles[x, y];
+
                 switch (tile)
                 {
                     case PathTile pathTile:
-                        // Highlight path tiles with different colors
-                        var path = paths.First(p => p.IsPartOfPath(pathTile.Position));
+                    {
+                        var path = paths.First(p =>
+                            p.IsPartOfPath(pathTile.Position));
+
                         Console.ForegroundColor = path.Color;
                         Console.Write("[P]");
                         Console.ResetColor();
                         break;
-                    case TowerTile towerTile:
-                        if (towerTile.Tower == null)
-                        {
-                            // Display empty tower tile
-                            Console.Write("[ ]");
-                            break;
-                        }
-                        // Display tile with tower
+                    }
+
+                    case TowerTile towerTile when towerTile.Tower == null:
+                        Console.Write("[ ]");
+                        break;
+
+                    case TowerTile:
                         Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.Write("{0}", "[T]");
+                        Console.Write("[T]");
                         Console.ResetColor();
                         break;
                 }
@@ -81,33 +132,28 @@ public class OutputHandler
         }
     }
 
-    private static void ViewStats(Game game, InputState inputState)
+    private static void ViewStats(Game game)
     {
-        Console.WriteLine("{0}", game.Wave?.Name);
+        Console.WriteLine($"Wave       : {game.Wave?.Name ?? "None"}");
+        Console.WriteLine($"Gold       : {game.Gold}");
+        Console.WriteLine($"Spawns     : {game.Spawns}");
+        Console.WriteLine($"Kills      : {game.Kills}");
+        Console.WriteLine($"Damage     : {game.Damage}");
+        Console.WriteLine($"Runtime    : {game.RuntimeMs / 1000}s");
+
+        var damagePerSecond = game.RuntimeMs > 0
+            ? game.Damage * 1000.0 / game.RuntimeMs
+            : 0;
+
+        Console.WriteLine($"Damage/s   : {damagePerSecond:F2}");
+
         Console.WriteLine();
-
-        Console.WriteLine("Gold: {0}", game.Gold);
-        Console.WriteLine("Total spawns: {0}", game.Spawns);
-        Console.WriteLine("Total kills: {0}", game.Kills);
-        Console.WriteLine("Total damage: {0}", game.Damage);
-        Console.WriteLine("Total runtime: {0}s", game.RuntimeMs / 1000);
-        Console.WriteLine("Damage/s: {0:F2}", game.Damage * 1000 / game.RuntimeMs);
-
-        Console.WriteLine();
-        Console.WriteLine("Mode: {0}", inputState.Mode);
-        Console.WriteLine("Tower: {0}", game.TowerTypes.FirstOrDefault(t => t.Id == inputState.TowerId)?.Name);
-        Console.WriteLine("Position: ({0}, {1})", inputState.TowerPosition.XPos, inputState.TowerPosition.YPos);
-        Console.WriteLine();
-
-        Console.WriteLine("[P] Place [U] Upgrade [Arrow Keys | WASD] Move");
-        Console.WriteLine("[V] Switch View [Enter] Confirm [Space] Pause [Q] Quit");
-
-        if (game.GameInfo.Trim() != string.Empty) { Console.WriteLine("Info: {0}", game.GameInfo.Trim()); }
-
-        if (game.Error != null)
-        {
-            Console.WriteLine();
-            Console.WriteLine(game.Error.Message);
-        }
+        Console.WriteLine("----------------------------------------");
+        Console.WriteLine("CONTROLS");
+        Console.WriteLine("----------------------------------------");
+        Console.WriteLine("[P] Place        [U] Upgrade");
+        Console.WriteLine("[F] FastForward  [Arrow/WASD] Move");
+        Console.WriteLine("[V] Switch View  [Enter] Confirm");
+        Console.WriteLine("[Space] Pause    [Q] Quit");
     }
 }
