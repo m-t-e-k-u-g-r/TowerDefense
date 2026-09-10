@@ -11,9 +11,9 @@ public class Enemy(EnemyType type, Path path)
     public float PathProgress => path.GetPathProgress(_pathIndex);
     public Position Position => path.GetPosition(_pathIndex, _progress);
 
-    public event Action<Enemy> OnDefeat;
-    public event Action<float> OnHit;
-    public event Action<Enemy> OnReach;
+    public event Action<Enemy>? OnDefeat;
+    public event Action<float>? OnHit;
+    public event Action<Enemy>? OnReach;
 
     public void Update(float deltaTime)
     {
@@ -28,7 +28,7 @@ public class Enemy(EnemyType type, Path path)
         _pathIndex += movedForward;
         if (_pathIndex >= path.Tiles.Length)
         {
-            OnReach.Invoke(this);
+            OnReach?.Invoke(this);
         }
     }
 
@@ -36,10 +36,10 @@ public class Enemy(EnemyType type, Path path)
     {
         if (Random.Shared.NextDouble() < Type.Evasion) return;
         Health -= damage;
-        OnHit.Invoke(damage);
+        OnHit?.Invoke(damage);
         if (Health <= 0)
         {
-            OnDefeat.Invoke(this);
+            OnDefeat?.Invoke(this);
         }
     }
 }

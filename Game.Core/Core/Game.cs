@@ -28,20 +28,6 @@ public class Game(Field field, TowerType[] towerTypes, Wave[] waves)
     public Wave[] Waves => waves;
     public Wave? Wave;
 
-    public void Start()
-    {
-        Console.WriteLine("Starting Game...");
-        foreach (var wave in waves)
-        {
-            while (wave.Duration > wave.Timer || _enemies.Count > 0)
-            {
-                Update(wave);
-                Thread.Sleep(1000 / TickRate);
-            }
-        }
-        Console.WriteLine("Game won!");
-    }
-
     public void Update(Wave wave)
     {
         const float deltaTime = (float)1 / TickRate;

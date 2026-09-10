@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game\Game.csproj", "{12A1104F-1B8C-4B46-85AE-723EA7B717B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Core", "Game.Core\Game.Core.csproj", "{12A1104F-1B8C-4B46-85AE-723EA7B717B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Console", "Game.Console\Game.Console.csproj", "{EDADD56E-965D-40FE-8D30-84DF9188E228}"
 EndProject
