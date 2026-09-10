@@ -4,6 +4,7 @@ using Core.Entities;
 using Core.Entities.Error;
 using Core.Entities.Tower;
 using Core.Field;
+using Core.Field.Tiles;
 using Core.Logic;
 using Models;
 using System;
@@ -39,12 +40,6 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
                 case ConsoleKey.V:
                     _inputState.View = _inputState.View.Next();
                     break;
-                case ConsoleKey.P:
-                    _inputState.Mode = Mode.Placement;
-                    break;
-                case ConsoleKey.U:
-                    _inputState.Mode = Mode.Upgrade;
-                    break;
                 case ConsoleKey.UpArrow:
                 case ConsoleKey.W:
                     if (_inputState.TowerPosition.YPos > 0)
@@ -66,7 +61,7 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
                         _inputState.TowerPosition.XPos++;
                     break;
                 case ConsoleKey.Enter:
-                    if (_inputState.Mode != null) HandleTowerAction(_inputState);
+                    HandleTowerAction(_inputState);
                     break;
             }
         }
@@ -76,15 +71,24 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
     private void HandleTowerAction(InputState inputState)
     {
         var position = inputState.TowerPosition;
-        var result = inputState.Mode switch
+        var tile = game.Field.Tiles[position.XPos, position.YPos];
+        if (tile is TowerTile towerTile)
         {
-            Mode.Placement => TryPlacingTower(inputState, position),
-            Mode.Upgrade => game.UpgradeTower(position),
-            _ => new Result<Tower>(null, new GameError(GameErrorCode.InvalidMode, "Invalid mode selected."))
-        };
-        var error = result.Error;
-        if (result.IsSuccess) { Console.WriteLine("Tower placed"); }
-        if (error != null) errorHandler.HandleError(error, TimeSpan.FromSeconds(3));
+            var result = towerTile switch
+            {
+                { Tower: null } => TryPlacingTower(inputState, position),
+                { Tower: not null }=> game.UpgradeTower(position),
+            };
+            if (result.Error != null)
+            {
+                errorHandler.HandleError(result.Error, TimeSpan.FromSeconds(3));
+            }
+        }
+
+        errorHandler.HandleError(
+            new GameError(GameErrorCode.InvalidPosition, "Cannot place tower at path position"),
+            TimeSpan.FromSeconds(3)
+        );
     }
 
     private Result<Tower> TryPlacingTower(InputState inputState, TilePosition position)

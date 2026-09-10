@@ -21,7 +21,6 @@ public class OutputHandler
         Console.WriteLine("              TOWER DEFENSE             ");
         Console.WriteLine("========================================");
         Console.WriteLine($"Status : {(game.Paused ? "Paused" : "Running")}");
-        Console.WriteLine($"Mode   : {inputState.Mode}");
         Console.WriteLine();
 
         // Selection information
@@ -151,7 +150,6 @@ public class OutputHandler
         Console.WriteLine("----------------------------------------");
         Console.WriteLine("CONTROLS");
         Console.WriteLine("----------------------------------------");
-        Console.WriteLine("[P] Place        [U] Upgrade");
         Console.WriteLine("[F] FastForward  [Arrow/WASD] Move");
         Console.WriteLine("[V] Switch View  [Enter] Confirm");
         Console.WriteLine("[Space] Pause    [Q] Quit");
