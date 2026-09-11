@@ -76,13 +76,14 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
         {
             var result = towerTile switch
             {
-                { Tower: null } => TryPlacingTower(inputState, position),
-                { Tower: not null }=> game.UpgradeTower(position),
+                { Tower: null } => TryPlacingTower(inputState.TowerId, position),
+                { Tower: not null }=> game.UpgradeTower(towerTile),
             };
             if (result.Error != null)
             {
                 errorHandler.HandleError(result.Error, TimeSpan.FromSeconds(3));
             }
+            return;
         }
 
         errorHandler.HandleError(
@@ -91,9 +92,8 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
         );
     }
 
-    private Result<Tower> TryPlacingTower(InputState inputState, TilePosition position)
+    private Result<Tower> TryPlacingTower(int? towerId, TilePosition position)
     {
-        var towerId = inputState.TowerId;
         return towerId != null 
             ? game.BuyTower(towerId.Value, position)
             : new Result<Tower>(null, new GameError(GameErrorCode.InvalidTowerType, "Invalid tower type."));

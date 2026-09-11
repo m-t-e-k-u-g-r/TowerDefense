@@ -5,6 +5,7 @@ using Entities.Enemy;
 using Entities.Error;
 using Entities.Tower;
 using Field;
+using Field.Tiles;
 using Waves;
 
 public class Game(Field field, TowerType[] towerTypes, Wave[] waves)
@@ -79,14 +80,9 @@ public class Game(Field field, TowerType[] towerTypes, Wave[] waves)
         return new Result<Tower>(tile.Tower, null);
     }
 
-    public Result<Tower> UpgradeTower(TilePosition position)
+    public Result<Tower> UpgradeTower(TowerTile tile)
     {
-        var tile = Field.GetTowerTiles()
-            .FirstOrDefault(t =>
-                t.Tower != null &&
-                t.Position.XPos == position.XPos &&
-                t.Position.YPos == position.YPos);
-        if (tile?.Tower == null) return new Result<Tower>(null, new GameError(GameErrorCode.InvalidPosition, "Tower not found"));
+        if (tile.Tower == null) return new Result<Tower>(null, new GameError(GameErrorCode.InvalidPosition, "Tower not found"));
 
         var tower = tile.Tower;
 
