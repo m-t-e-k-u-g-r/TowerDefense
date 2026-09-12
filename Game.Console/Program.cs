@@ -20,8 +20,8 @@ public static class Program
 
     private static Game CreateGame(string path)
     {
-        var configHandler = new ConfigHandler();
-        var result = configHandler.LoadConfig(path);
+        var configLoader = new ConfigLoader();
+        var result = configLoader.LoadConfig(path);
         var config = result.Value;
 
         if (!result.IsSuccess || config == null)

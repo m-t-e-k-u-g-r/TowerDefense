@@ -1,26 +1,13 @@
-namespace Game.Console.Handler;
+namespace Game.Core.Logic;
 
-using Core.Entities;
-using Core.Entities.Enemy;
-using Core.Entities.Error;
-using Core.Entities.Tower;
-using Models.Config;
-using Newtonsoft.Json;
+using Entities.Config;
+using Entities.Enemy;
+using Entities.Tower;
+using System;
 
-public class ConfigHandler
+public static class ConfigValidator
 {
-    public Result<GameConfig> LoadConfig(string path)
-    {
-        var jsonString = File.ReadAllText(path);
-        var deserialized = JsonConvert.DeserializeObject<GameConfig>(jsonString);
-        if (deserialized == null) throw new NullReferenceException();
-        var valid = CheckConfiguration(deserialized);
-        return valid 
-            ? new Result<GameConfig>(deserialized, null)
-            : new Result<GameConfig>(null, new GameError(GameErrorCode.InvalidConfiguration, "Invalid configuration"));
-    }
-
-    private static bool CheckConfiguration(GameConfig config)
+    public static bool CheckConfiguration(GameConfig config)
     {
         var width = config.Field.Width;
         var height = config.Field.Height;
@@ -47,37 +34,37 @@ public class ConfigHandler
     public static bool FieldSizeIsOk(int width, int height)
     {
         if (width > 0 && height > 0) return true;
-        System.Console.WriteLine("Invalid field size provided");
+        Console.WriteLine("Invalid field size provided");
         return false;
     }
     public static bool PathsExist(ConfigPath[] paths)
     {
         if (paths.Length >= 1) return true;
-        System.Console.WriteLine("No paths found in configuration");
+        Console.WriteLine("No paths found in configuration");
         return false;
     }
     public static bool WavesExist(ConfigWave[] waves)
     {
         if (waves.Length > 0) return true;
-        System.Console.WriteLine("No waves found in configuration");
+        Console.WriteLine("No waves found in configuration");
         return false;
     }
     public static bool EnemyTypesExist(EnemyType[] enemyTypes)
     {
         if (enemyTypes.Length > 0) return true;
-        System.Console.WriteLine("No enemy types found in configuration");
+        Console.WriteLine("No enemy types found in configuration");
         return false;
     }
     public static bool TowerTypesExist(TowerType[] towerTypes)
     {
         if (towerTypes.Length > 0) return true;
-        System.Console.WriteLine("No tower types found in configuration");
+        Console.WriteLine("No tower types found in configuration");
         return false;
     }
     public static bool WaveDurationIsOk(ConfigWave[] waves)
     {
         if (waves.All(w => w.Duration >= 1)) return true;
-        System.Console.WriteLine("Wave duration may not be less than 1 second");
+        Console.WriteLine("Wave duration may not be less than 1 second");
         return false;
     }
     public static bool EnemyTypesAreOk(EnemyType[] enemyTypes)
@@ -90,13 +77,13 @@ public class ConfigHandler
                         Evasion: >= 0 and < 1
                     })
             ) return true;
-        System.Console.WriteLine("Invalid enemy type provided");
+        Console.WriteLine("Invalid enemy type provided");
         return false;
     }
     public static bool TowerTypeLevelsExist(TowerType[] towerTypes)
     {
         if (towerTypes.All(t => t.Levels.Length != 0)) return true;
-        System.Console.WriteLine("Tower type has no levels");
+        Console.WriteLine("Tower type has no levels");
         return false;
     }
     public static bool TowerPositionsAreValid(ConfigTower[] towers, int width, int height)
@@ -106,7 +93,7 @@ public class ConfigHandler
                 t.Position.XPos < width &&
                 t.Position.YPos >= 0 &&
                 t.Position.YPos < height)) return true;
-        System.Console.WriteLine("Tower position outside field");
+        Console.WriteLine("Tower position outside field");
         return false;
     }
     public static bool TowerTypesAreValid(TowerType[] towerTypes)
@@ -122,13 +109,13 @@ public class ConfigHandler
                         })
                 )
             ) return true;
-        System.Console.WriteLine("Invalid tower type provided. Cost, damage, range and fire rate may not be 0");
+        Console.WriteLine("Invalid tower type provided. Cost, damage, range and fire rate may not be 0");
         return false;
     }
     public static bool SpawnWavesAreNonZero(ConfigWave[] waves)
     {
         if (waves.SelectMany(wave => wave.Groups).All(group => group.EnemyCount >= 1)) return true;
-        System.Console.WriteLine("Enemy count of spawn group may not be less than 1");
+        Console.WriteLine("Enemy count of spawn group may not be less than 1");
         return false;
     }
     public static bool NoDuplicateEnemyType(EnemyType[] enemyTypes)
@@ -138,7 +125,7 @@ public class ConfigHandler
         {
             if (!enemyIds.Add(enemyType.Id))
             {
-                System.Console.WriteLine("Duplicate enemy type: {0}", enemyType.Id);
+                Console.WriteLine("Duplicate enemy type: {0}", enemyType.Id);
                 return false;
             }
         }
@@ -154,7 +141,7 @@ public class ConfigHandler
                       tile[1] < height && tile[1] >= 0) &&
                   path.Tiles.Select(tile => (tile[0], tile[1])).Distinct().Count() == path.Tiles.Length)))
         {
-            System.Console.WriteLine("Invalid path provided");
+            Console.WriteLine("Invalid path provided");
             return false;
         }
         return true;
@@ -166,7 +153,7 @@ public class ConfigHandler
             .Select(group => group.Type)
             .FirstOrDefault(id => !enemyIds.Contains(id));
         if (invalidEnemy == null) return true;
-        System.Console.WriteLine("Undefined enemy {0} found", invalidEnemy);
+        Console.WriteLine("Undefined enemy {0} found", invalidEnemy);
         return false;
     }
     public static bool ReferencedTowersAreSet(ConfigTower[] towers, TowerType[] towerTypes)
@@ -176,7 +163,7 @@ public class ConfigHandler
                 var towerType = towerTypes.FirstOrDefault(t => t.Id == ct.Type);
                 return towerType != null && ct.Level >= 1 && ct.Level < towerType.Levels.Length;
             })) return true;
-        System.Console.WriteLine("Invalid tower type or level provided");
+        Console.WriteLine("Invalid tower type or level provided");
         return false;
     }
     public static bool NoDuplicatedOccupiedTowerTiles(ConfigTower[] towers)
@@ -186,7 +173,7 @@ public class ConfigHandler
                 .Distinct()
                 .Count() != towers.Length)
         {
-            System.Console.WriteLine("Multiple towers occupy the same position");
+            Console.WriteLine("Multiple towers occupy the same position");
             return false;
         }
         return true;

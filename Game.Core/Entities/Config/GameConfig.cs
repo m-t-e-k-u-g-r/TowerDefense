@@ -1,7 +1,7 @@
-namespace Game.Console.Models.Config;
+namespace Game.Core.Entities.Config;
 
-using Core.Entities.Enemy;
-using Core.Entities.Tower;
+using Enemy;
+using Tower;
 
 public record GameConfig
 {

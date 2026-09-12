@@ -1,12 +1,11 @@
-namespace Game.Console;
+namespace Game.Core.Logic;
 
-using Core.Entities.Enemy;
-using Core.Entities.Tower;
-using Core.Field;
-using Core.Field.Tiles;
-using Core.Logic;
-using Core.Waves;
-using Models.Config;
+using Entities.Config;
+using Entities.Enemy;
+using Entities.Tower;
+using Field;
+using Field.Tiles;
+using Waves;
 
 public class GameSetup
 {

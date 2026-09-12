@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+namespace Game.Core.Entities.Config;
 
-namespace Game.Console.Models.Config;
+using System.ComponentModel.DataAnnotations;
 
 public record ConfigWave
 {

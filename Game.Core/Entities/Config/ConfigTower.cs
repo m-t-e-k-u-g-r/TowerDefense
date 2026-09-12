@@ -1,8 +1,7 @@
+namespace Game.Core.Entities.Config;
+
+using Field;
 using System.ComponentModel.DataAnnotations;
-
-namespace Game.Console.Models.Config;
-
-using Core.Field;
 
 public record ConfigTower
 {
