@@ -2,7 +2,7 @@ namespace Game.Core.Field.Tiles;
 
 using Entities.Tower;
 
-public class TowerTile(int x, int y) : Tile(x, y)
+public class TowerTile(int x, int y, PlacedTower? tower) : Tile(x, y)
 {
-    public Tower? Tower { get; set; }
+    public PlacedTower? Tower { get; set; } = tower;
 }

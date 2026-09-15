@@ -1,26 +1,21 @@
+using Game.Core.Field;
+
 namespace Game.Core.Entities.Tower;
 
-using Field;
-
-public class Tower(TowerType type, int level, TilePosition position)
+public abstract class PlacedTower(TilePosition position)
 {
     private float _timeElapsed;
-    public int Level = level;
-    public TowerType Type { get; } = type;
-    private TowerLevel CurrentLevel =>
-        Type.GetLevel(Level)
-        ?? throw new InvalidOperationException("Invalid tower level");
-    public bool CanUpgrade => Level < Type.Levels.Length;
+    protected abstract float Damage { get; }
+    protected abstract float Range { get; }
+    protected abstract float FireRate { get; }
 
     public void Update(float deltaTime, List<Enemy.Enemy> enemies)
     {
         _timeElapsed += deltaTime;
-        var shots = (int)Math.Floor(_timeElapsed / CurrentLevel.FireRate);
+        var shots = (int)Math.Floor(_timeElapsed / FireRate);
         FindTarget(enemies, shots);
     }
-
-    public void Upgrade() { Level++; }
-
+    
     private void FindTarget(List<Enemy.Enemy> enemies, int shots)
     {
         if (enemies.Count == 0 || shots < 1) return;
@@ -30,7 +25,7 @@ public class Tower(TowerType type, int level, TilePosition position)
                 {
                     var dx = e.Position.XPos - position.XPos;
                     var dy = e.Position.YPos - position.YPos;
-                    return CurrentLevel.Range > dx * dx + dy * dy ? e : null;
+                    return Range > dx * dx + dy * dy ? e : null;
                 })
                 .OfType<Enemy.Enemy>()
                 .ToList();
@@ -40,8 +35,8 @@ public class Tower(TowerType type, int level, TilePosition position)
                 .OrderByDescending(e => e.PathProgress)
                 .ThenBy(e => e.Health)
                 .First();
-            target.ReceiveDamage(CurrentLevel.Damage);
-            _timeElapsed -= CurrentLevel.FireRate;
+            target.ReceiveDamage(Damage);
+            _timeElapsed -= FireRate;
         }
     }
 }

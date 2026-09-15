@@ -52,47 +52,52 @@ public class Game(Field field, TowerType[] towerTypes, Wave[] waves)
 
         var towers = Field.GetTowerTiles()
             .Select(t => t.Tower)
-            .OfType<Tower>()
+            .OfType<RegularTower>()
             .ToList();
         foreach (var tower in towers.ToList())
         {
             tower.Update(deltaTime, _enemies);
         }
     }
-    public Result<Tower> BuyTower(int id, TilePosition position)
+    public Result<RegularTower> BuyTower(int id, TilePosition position)
     {
         var towerType = GetTowerType(id);
-        if (towerType == null) return new Result<Tower>(null, new GameError(GameErrorCode.InvalidTowerType, "Tower type not found"));
+        if (towerType == null) return new Result<RegularTower>(null, new GameError(GameErrorCode.InvalidTowerType, "Tower type not found"));
 
         var tile = Field.GetTowerTiles()
             .FirstOrDefault(t =>
                 t.Tower == null &&
                 t.Position.XPos == position.XPos &&
                 t.Position.YPos == position.YPos);
-        if (tile == null) return new Result<Tower>(null, new GameError(GameErrorCode.InvalidPosition, "Position is invalid or occupied"));
+        if (tile == null) return new Result<RegularTower>(null, new GameError(GameErrorCode.InvalidPosition, "Position is invalid or occupied"));
 
         var level = towerType.Levels[0];
-        if (_gold < level.Cost) return new Result<Tower>(null, new GameError(GameErrorCode.InsufficientGold, "Not enough gold"));
+        if (_gold < level.Cost) return new Result<RegularTower>(null, new GameError(GameErrorCode.InsufficientGold, "Not enough gold"));
 
-        tile.Tower = new Tower(towerType, 1, position);
+        var newTower = new RegularTower(towerType, 1, position);
+        tile.Tower = newTower;
 
-        _gold -= towerType?.Levels[0].Cost ?? 0;
-        return new Result<Tower>(tile.Tower, null);
+        _gold -= towerType.Levels[0].Cost;
+        return new Result<RegularTower>(newTower, null);
     }
 
-    public Result<Tower> UpgradeTower(TowerTile tile)
+    public Result<RegularTower> UpgradeTower(TowerTile tile)
     {
-        if (tile.Tower == null) return new Result<Tower>(null, new GameError(GameErrorCode.InvalidPosition, "Tower not found"));
+        if (tile.Tower == null) return new Result<RegularTower>(null, new GameError(GameErrorCode.InvalidPosition, "Tower not found"));
 
         var tower = tile.Tower;
+        if (tower is RegularTower regularTower)
+        {
+            var nextLevel = regularTower.NextLevel;
+            if (nextLevel == null) return new Result<RegularTower>(null, new GameError(GameErrorCode.MaxLevelReached, "Tower is already at maximum level"));
 
-        var nextLevel = tower.Type.GetLevel(tower.Level + 1);
-        if (nextLevel == null) return new Result<Tower>(null, new GameError(GameErrorCode.MaxLevelReached, "Tower is already at maximum level"));
-
-        if (_gold < nextLevel.Cost) return new Result<Tower>(null, new GameError(GameErrorCode.InsufficientGold, "Not enough gold"));
-        _gold -= nextLevel.Cost;
-        tower.Upgrade();
-        return new Result<Tower>(tower, null);
+            if (_gold < nextLevel.Cost) return new Result<RegularTower>(null, new GameError(GameErrorCode.InsufficientGold, "Not enough gold"));
+            _gold -= nextLevel.Cost;
+            regularTower.Upgrade();
+            return new Result<RegularTower>(regularTower, null);
+        }
+        return new Result<RegularTower>(null, new GameError(
+                GameErrorCode.InvalidPosition, "End tower cannot be upgraded"));
     }
 
     private void OnEnemyDefeat(Enemy enemy)
@@ -102,7 +107,7 @@ public class Game(Field field, TowerType[] towerTypes, Wave[] waves)
         Kills++;
     }
 
-    private void OnEnemyDamage(float damage) { Damage += damage; }
+    private void OnEnemyDamage(float damage) => Damage += damage;
 
     private static void OnEnemyHit(Enemy enemy)
     {

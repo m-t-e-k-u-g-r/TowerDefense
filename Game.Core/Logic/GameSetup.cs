@@ -16,7 +16,7 @@ public class GameSetup
         {
             for (var y = 0; y < config.Field.Height; y++)
             {
-                tiles[x, y] = new TowerTile(x, y);
+                tiles[x, y] = new TowerTile(x, y, null);
             }
         }
 
@@ -24,17 +24,16 @@ public class GameSetup
         List<Path> paths = [];
         foreach (var path in config.Paths)
         {
-            foreach (var tile in path.Tiles)
+            foreach (var (x, y) in path.Tiles) 
             {
-                var x = tile[0];
-                var y = tile[1];
                 AddPathTile(x, y, tiles, pathPoints);
             }
-            paths.Add(new Path(pathPoints.ToArray(), path.Color));
-        }
-        var field = new Field(tiles, paths.ToArray());
 
-        Dictionary<string, EnemyType> enemyTypes = new();
+            paths.Add(new Path([..pathPoints], path.Color));
+        }
+        var field = new Field(tiles, [..paths]);
+
+        Dictionary<Guid, EnemyType> enemyTypes = new();
         foreach (var enemyType in config.EnemyTypes)
         {
             enemyTypes.Add(enemyType.Id, enemyType);
@@ -43,20 +42,15 @@ public class GameSetup
         List<Wave> waveList = [];
         foreach (var wave in config.Waves)
         {
-            waveList.Add(new Wave(wave.Name, wave.Duration, wave.Groups
-                .Select(s => new SpawnGroup(enemyTypes[s.Type], s.EnemyCount))
-                .ToArray()
+            waveList.Add(new Wave(wave.Name, wave.Duration, [..wave.Groups
+                .Select(s => 
+                    new SpawnGroup(enemyTypes[s.EnemyId], s.EnemyCount)
+                )]
             ));
         }
         var waves = waveList.ToArray();
 
-        foreach (var tower in config.Towers)
-        {
-            PlaceTower(field,
-                tower.Position.XPos, tower.Position.YPos,
-                config.TowerTypes, tower.Type,
-                tower.Level);
-        }
+        foreach (var tower in config.Towers) PlaceTower(field, tower);
         return new Game(field, config.TowerTypes, waves);
     }
 
@@ -67,14 +61,15 @@ public class GameSetup
         pathPoints.Add(pathTile);
     }
 
-    private static void PlaceTower(Field field, int x, int y, TowerType[] types, int type, int level)
+    private static void PlaceTower(Field field, ConfigTower tower)
     {
-        if (field.Tiles[x, y] is TowerTile towerTile)
+        var pos = tower.Position;
+        if (field.Tiles[pos.XPos, pos.YPos] is not PathTile)
         {
-            towerTile.Tower = new Tower(
-                types.First(t => t.Id == type),
-                level,
-                new TilePosition(x, y));
+            field.Tiles[pos.XPos, pos.YPos] = new TowerTile(
+                pos.XPos, pos.YPos,
+                new FinalTower(pos, tower)
+            );
         }
     }
 }

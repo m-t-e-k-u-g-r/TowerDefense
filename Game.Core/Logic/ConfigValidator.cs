@@ -27,7 +27,6 @@ public static class ConfigValidator
                ReferencedEnemiesAreSet(
                    config.Waves, config.EnemyTypes.Select(et => et.Id).ToList()
                    ) &&
-               ReferencedTowersAreSet(config.Towers, config.TowerTypes) &&
                NoDuplicatedOccupiedTowerTiles(config.Towers);
     }
 
@@ -154,16 +153,6 @@ public static class ConfigValidator
             .FirstOrDefault(id => !enemyIds.Contains(id));
         if (invalidEnemy == null) return true;
         Console.WriteLine("Undefined enemy {0} found", invalidEnemy);
-        return false;
-    }
-    public static bool ReferencedTowersAreSet(ConfigTower[] towers, TowerType[] towerTypes)
-    {
-        if (towers.All(ct =>
-            {
-                var towerType = towerTypes.FirstOrDefault(t => t.Id == ct.Type);
-                return towerType != null && ct.Level >= 1 && ct.Level < towerType.Levels.Length;
-            })) return true;
-        Console.WriteLine("Invalid tower type or level provided");
         return false;
     }
     public static bool NoDuplicatedOccupiedTowerTiles(ConfigTower[] towers)
