@@ -15,10 +15,7 @@ public class Enemy(EnemyType type, Path path)
     public event Action<float>? OnHit;
     public event Action<Enemy>? OnReach;
 
-    public void Update(float deltaTime)
-    {
-        Move(deltaTime);
-    }
+    public void Update(float deltaTime) => Move(deltaTime);
 
     private void Move(float deltaTime)
     {

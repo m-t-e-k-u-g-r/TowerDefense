@@ -24,9 +24,7 @@ public static class ConfigValidator
                SpawnWavesAreNonZero(config.Waves) &&
                NoDuplicateEnemyType(config.EnemyTypes) &&
                PathsAreValid(config.Paths, width, height) &&
-               ReferencedEnemiesAreSet(
-                   config.Waves, config.EnemyTypes.Select(et => et.Id).ToList()
-                   ) &&
+               ReferencedEnemiesAreSet(config.Waves, [..config.EnemyTypes.Select(et => et.Id)]) &&
                NoDuplicatedOccupiedTowerTiles(config.Towers);
     }
 
@@ -119,7 +117,7 @@ public static class ConfigValidator
     }
     public static bool NoDuplicateEnemyType(EnemyType[] enemyTypes)
     {
-        var enemyIds = new HashSet<string>();
+        var enemyIds = new HashSet<Guid>();
         foreach (var enemyType in enemyTypes)
         {
             if (!enemyIds.Add(enemyType.Id))
@@ -135,23 +133,22 @@ public static class ConfigValidator
         if (paths.Any(path =>
                 !(path.Tiles.Length > 0 &&
                   path.Tiles.All(tile =>
-                      tile.Length == 2 &&
-                      tile[0] < width && tile[0] >= 0 &&
-                      tile[1] < height && tile[1] >= 0) &&
-                  path.Tiles.Select(tile => (tile[0], tile[1])).Distinct().Count() == path.Tiles.Length)))
+                      tile.Item1 < width && tile.Item1 >= 0 &&
+                      tile.Item2 < height && tile.Item2 >= 0) &&
+                  path.Tiles.Select(tile => (tile.Item1, tile.Item2)).Distinct().Count() == path.Tiles.Length)))
         {
             Console.WriteLine("Invalid path provided");
             return false;
         }
         return true;
     }
-    public static bool ReferencedEnemiesAreSet(ConfigWave[] waves, List<string> enemyIds)
+    public static bool ReferencedEnemiesAreSet(ConfigWave[] waves, List<Guid> enemyIds)
     {
         var invalidEnemy = waves
             .SelectMany(wave => wave.Groups)
-            .Select(group => group.Type)
+            .Select(group => group.EnemyId)
             .FirstOrDefault(id => !enemyIds.Contains(id));
-        if (invalidEnemy == null) return true;
+        if (invalidEnemy == Guid.Empty) return true;
         Console.WriteLine("Undefined enemy {0} found", invalidEnemy);
         return false;
     }

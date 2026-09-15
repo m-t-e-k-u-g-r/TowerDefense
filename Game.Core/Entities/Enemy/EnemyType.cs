@@ -1,8 +1,9 @@
 namespace Game.Core.Entities.Enemy;
 
-public class EnemyType(string id, int maxHealth, float moveSpeed, float evasion, int reward)
+public class EnemyType(Guid id, string name, int maxHealth, float moveSpeed, float evasion, int reward)
 {
-    public string Id { get; } = id;
+    public Guid Id { get; } = id;
+    public string Name { get; } = name;
     public int MaxHealth { get; } = maxHealth;
     public float MoveSpeed { get; } = moveSpeed;
     public float Evasion { get; } = evasion;

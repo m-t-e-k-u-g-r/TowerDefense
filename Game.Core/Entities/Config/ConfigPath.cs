@@ -7,5 +7,5 @@ public record ConfigPath
     [Required]
     public required ConsoleColor Color { get; init; }
     [Required]
-    public required int[][] Tiles { get; init; }
+    public required (int, int)[] Tiles { get; init; }
 }
