@@ -5,20 +5,15 @@ using Tiles;
 public class Path(PathTile[] pathTiles, ConsoleColor color)
 {
     public PathTile[] Tiles { get; } = pathTiles;
-    public ConsoleColor Color { get; set; } = color;
+    public ConsoleColor Color { get; } = color;
 
-    public float GetPathProgress(int pathIndex)
-    {
-        return (float)pathIndex / Tiles.Length;
-    }
+    public float GetPathProgress(int pathIndex) => (float)pathIndex / Tiles.Length;
 
     public Position GetPosition(int pathIndex, float progress)
     {
         var tile = Tiles[pathIndex];
-        if (pathIndex >= Tiles.Length - 1)
-        {
-            return new Position(tile.Position.XPos, tile.Position.YPos);
-        }
+        if (pathIndex >= Tiles.Length - 1) return new Position(tile.Position.XPos, tile.Position.YPos);
+
         var nextTile = Tiles[pathIndex + 1];
         float x;
         float y;
@@ -35,8 +30,5 @@ public class Path(PathTile[] pathTiles, ConsoleColor color)
         return new Position(x, y);
     }
 
-    public bool IsPartOfPath(TilePosition position)
-    {
-        return Tiles.Any(tile => tile.Position == position);
-    }
+    public bool IsPartOfPath(TilePosition position) => Tiles.Any(tile => tile.Position == position);
 }
