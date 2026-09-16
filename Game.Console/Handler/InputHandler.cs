@@ -92,11 +92,11 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
         );
     }
 
-    private Result<Tower> TryPlacingTower(int? towerId, TilePosition position)
+    private Result<RegularTower> TryPlacingTower(int? towerId, TilePosition position)
     {
         return towerId != null 
             ? game.BuyTower(towerId.Value, position)
-            : new Result<Tower>(null, new GameError(GameErrorCode.InvalidTowerType, "Invalid tower type."));
+            : new Result<RegularTower>(null, new GameError(GameErrorCode.InvalidTowerType, "Invalid tower type."));
     }
 
     private int TryGetDigit(char keyChar)

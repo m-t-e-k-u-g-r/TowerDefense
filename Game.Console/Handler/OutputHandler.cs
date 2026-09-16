@@ -1,5 +1,6 @@
 namespace Game.Console.Handler;
 
+using Core.Entities.Tower;
 using Core.Field;
 using Core.Field.Tiles;
 using Core.Logic;
@@ -31,10 +32,18 @@ public class OutputHandler
             $"Position : ({selectedPosition.XPos}, {selectedPosition.YPos})");
         Console.WriteLine($"Tile     : {selectedTile.GetType().Name}");
 
-        if (selectedTile is TowerTile towerTile && towerTile.Tower != null)
+        if (selectedTile is TowerTile { Tower: var tower})
         {
-            Console.WriteLine($"Tower    : {towerTile.Tower.Type.Name}");
-            Console.WriteLine($"Level    : {towerTile.Tower.Level}");
+            switch (tower)
+            {
+                case RegularTower regular:
+                    Console.WriteLine($"Tower    : {regular.Type.Name}");
+                    Console.WriteLine($"Level    : {regular.Level}");
+                    break;
+                case FinalTower:
+                    Console.WriteLine("Tower    : Fixed Tower");
+                    break;
+            }
         }
 
         var selectedTower = game.TowerTypes
@@ -116,7 +125,7 @@ public class OutputHandler
                         break;
                     }
 
-                    case TowerTile towerTile when towerTile.Tower == null:
+                    case TowerTile { Tower: null }:
                         Console.Write("[ ]");
                         break;
 
