@@ -1,5 +1,6 @@
-namespace Game.Core.Entities.Config;
+namespace Game.Domain.Config;
 
+using Field;
 using System.ComponentModel.DataAnnotations;
 
 public record ConfigPath
@@ -7,5 +8,5 @@ public record ConfigPath
     [Required]
     public required ConsoleColor Color { get; init; }
     [Required]
-    public required (int, int)[] Tiles { get; init; }
+    public required TilePosition[] Tiles { get; init; }
 }

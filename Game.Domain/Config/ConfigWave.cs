@@ -1,4 +1,4 @@
-namespace Game.Core.Entities.Config;
+namespace Game.Domain.Config;
 
 using System.ComponentModel.DataAnnotations;
 
