@@ -1,4 +1,4 @@
-namespace Game.Core.Field.Tiles;
+namespace Game.Domain.Field.Tiles;
 
 public abstract class Tile(int x, int y)
 {

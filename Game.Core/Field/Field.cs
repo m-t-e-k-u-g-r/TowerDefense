@@ -1,14 +1,11 @@
 namespace Game.Core.Field;
 
+using Domain.Field;
+using Domain.Field.Tiles;
 using Tiles;
 
-public class Field(Tile[,] tiles, Path[] paths)
+public class Field(Tile[,] tiles, Path[] paths) : Domain.Field.Field(tiles, paths)
 {
-    public Path[] Paths { get; } = paths;
-    public Tile[,] Tiles { get; } = tiles;
-    public int Width => Tiles.GetLength(0);
-    public int Height => Tiles.GetLength(1);
-
     public List<TowerTile> GetTowerTiles()
     {
         var towerTiles = new List<TowerTile>();

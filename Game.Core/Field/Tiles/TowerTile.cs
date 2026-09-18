@@ -1,5 +1,6 @@
 namespace Game.Core.Field.Tiles;
 
+using Domain.Field.Tiles;
 using Entities.Tower;
 
 public class TowerTile(int x, int y, PlacedTower? tower) : Tile(x, y)

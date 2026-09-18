@@ -1,4 +1,4 @@
-namespace Game.Core.Field;
+namespace Game.Domain.Field;
 
 public class TilePosition(int x, int y)
 {
