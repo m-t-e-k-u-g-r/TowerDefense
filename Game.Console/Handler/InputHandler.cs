@@ -3,9 +3,9 @@ namespace Game.Console.Handler;
 using Core.Entities;
 using Core.Entities.Error;
 using Core.Entities.Tower;
-using Core.Field;
 using Core.Field.Tiles;
 using Core.Logic;
+using Domain.Field;
 using Models;
 using System;
 
@@ -77,7 +77,7 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
             var result = towerTile switch
             {
                 { Tower: null } => TryPlacingTower(inputState.TowerId, position),
-                { Tower: not null }=> game.UpgradeTower(towerTile),
+                { Tower: not null }=> game.UpgradeTower(towerTile)
             };
             if (result.Error != null)
             {
@@ -99,7 +99,7 @@ public class InputHandler(Game game, ErrorHandler errorHandler)
             : new Result<RegularTower>(null, new GameError(GameErrorCode.InvalidTowerType, "Invalid tower type."));
     }
 
-    private int TryGetDigit(char keyChar)
+    private static int TryGetDigit(char keyChar)
     {
         const string digits = "0123456789";
         return digits.Contains(keyChar)

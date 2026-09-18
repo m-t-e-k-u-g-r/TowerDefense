@@ -1,8 +1,8 @@
 namespace Game.Core.Logic;
 
-using Entities.Config;
-using Entities.Enemy;
-using Entities.Tower;
+using Domain.Config;
+using Domain.Entities.Enemy;
+using Domain.Entities.Tower;
 using System;
 
 public static class ConfigValidator
@@ -111,7 +111,7 @@ public static class ConfigValidator
     }
     public static bool SpawnWavesAreNonZero(ConfigWave[] waves)
     {
-        if (waves.SelectMany(wave => wave.Groups).All(group => group.EnemyCount >= 1)) return true;
+        if (waves.SelectMany(wave => wave.Groups).All(group => group.Count >= 1)) return true;
         Console.WriteLine("Enemy count of spawn group may not be less than 1");
         return false;
     }
@@ -133,9 +133,9 @@ public static class ConfigValidator
         if (paths.Any(path =>
                 !(path.Tiles.Length > 0 &&
                   path.Tiles.All(tile =>
-                      tile.Item1 < width && tile.Item1 >= 0 &&
-                      tile.Item2 < height && tile.Item2 >= 0) &&
-                  path.Tiles.Select(tile => (tile.Item1, tile.Item2)).Distinct().Count() == path.Tiles.Length)))
+                      tile.XPos < width && tile.XPos >= 0 &&
+                      tile.YPos < height && tile.YPos >= 0) &&
+                  path.Tiles.Select(tile => (tile.XPos, tile.YPos)).Distinct().Count() == path.Tiles.Length)))
         {
             Console.WriteLine("Invalid path provided");
             return false;

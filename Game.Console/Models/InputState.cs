@@ -1,6 +1,6 @@
 namespace Game.Console.Models;
 
-using Core.Field;
+using Domain.Field;
 
 public class InputState
 {

@@ -1,9 +1,9 @@
 namespace Game.Console.Handler;
 
 using Core.Entities;
-using Core.Entities.Config;
 using Core.Entities.Error;
 using Core.Logic;
+using Domain.Config;
 using Newtonsoft.Json;
 
 public class ConfigLoader

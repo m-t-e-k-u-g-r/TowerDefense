@@ -1,9 +1,10 @@
 namespace Game.Console.Handler;
 
 using Core.Entities.Tower;
-using Core.Field;
 using Core.Field.Tiles;
 using Core.Logic;
+using Domain.Field;
+using Domain.Field.Tiles;
 using Models;
 using System;
 
@@ -85,14 +86,12 @@ public class OutputHandler
         }
 
         // Error information
-        if (game.Error != null)
-        {
-            Console.WriteLine();
-            Console.WriteLine("----------------------------------------");
-            Console.WriteLine("ERROR");
-            Console.WriteLine("----------------------------------------");
-            Console.WriteLine(game.Error.Message);
-        }
+        if (game.Error == null) return;
+        Console.WriteLine();
+        Console.WriteLine("----------------------------------------");
+        Console.WriteLine("ERROR");
+        Console.WriteLine("----------------------------------------");
+        Console.WriteLine(game.Error.Message);
     }
 
     private static void ViewBoard(Tile[,] tiles, Path[] paths, TilePosition selectedPosition)

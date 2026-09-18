@@ -1,9 +1,9 @@
 namespace Game.Core.Logic;
 
-using Entities.Config;
-using Entities.Enemy;
+using Domain.Config;
+using Domain.Field;
+using Domain.Field.Tiles;
 using Entities.Tower;
-using Field;
 using Field.Tiles;
 using Waves;
 
@@ -20,28 +20,28 @@ public class GameSetup
         Path[] paths = [..config.Paths.Select(p => new Path(
             [..p.Tiles.Select(pos =>
             {
-                var pathTile = new PathTile(pos.Item1, pos.Item2);
-                tiles[pos.Item1, pos.Item2] = pathTile;
+                var pathTile = new PathTile(pos.XPos, pos.YPos);
+                tiles[pos.XPos, pos.YPos] = pathTile;
                 return pathTile;
             })],
             p.Color
         ))];
-        
-        var field = new Field(tiles, [..paths]);
+
+        var field = new Core.Field.Field(tiles, [..paths]);
 
         var enemyTypes = config.EnemyTypes.ToDictionary(t => t.Id);
 
         Wave[] waves = [..config.Waves.Select(w => new Wave(
             w.Name,
             w.Duration,
-            [.. w.Groups.Select(s => new SpawnGroup(enemyTypes[s.EnemyId], s.EnemyCount))]
+            [.. w.Groups.Select(s => new SpawnGroup(enemyTypes[s.EnemyId], s.Count))]
         ))];
 
         foreach (var tower in config.Towers) PlaceTower(field, tower);
         return new Game(field, config.TowerTypes, waves);
     }
 
-    private static void PlaceTower(Field field, ConfigTower tower)
+    private static void PlaceTower(Core.Field.Field field, ConfigTower tower)
     {
         var pos = tower.Position;
         if (field.Tiles[pos.XPos, pos.YPos] is not PathTile)

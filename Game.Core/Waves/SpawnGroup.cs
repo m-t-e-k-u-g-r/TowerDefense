@@ -1,6 +1,6 @@
 namespace Game.Core.Waves;
 
-using Entities.Enemy;
+using Domain.Entities.Enemy;
 
 public class SpawnGroup(EnemyType type, int enemyCount)
 {

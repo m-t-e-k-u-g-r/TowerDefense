@@ -1,21 +1,22 @@
 namespace Game.Core.Logic;
 
+using Domain.Entities.Tower;
+using Domain.Field;
 using Entities;
 using Entities.Enemy;
 using Entities.Error;
 using Entities.Tower;
-using Field;
 using Field.Tiles;
 using Waves;
 
-public class Game(Field field, TowerType[] towerTypes, Wave[] waves)
+public class Game(Core.Field.Field field, TowerType[] towerTypes, Wave[] waves)
 {
     public float Damage;
     private readonly List<Enemy> _enemies = [];
     public List<Enemy> Enemies => _enemies;
     public DateTime ErrorExpiresAt;
     public GameError? Error { get; set; }
-    public readonly Field Field = field;
+    public readonly Core.Field.Field Field = field;
     public string GameInfo { get; set; } = "";
     private int _gold;
     public int Gold => _gold;
