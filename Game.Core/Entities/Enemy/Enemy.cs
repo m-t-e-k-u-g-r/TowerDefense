@@ -1,6 +1,7 @@
 namespace Game.Core.Entities.Enemy;
 
-using Field;
+using Domain.Entities.Enemy;
+using Domain.Field;
 
 public class Enemy(EnemyType type, Path path)
 {

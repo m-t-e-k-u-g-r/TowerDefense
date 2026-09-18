@@ -1,7 +1,7 @@
 namespace Game.Core.Entities.Tower;
 
-using Config;
-using Field;
+using Domain.Config;
+using Domain.Field;
 
 public class FinalTower(TilePosition position, ConfigTower tower) : PlacedTower(position)
 {

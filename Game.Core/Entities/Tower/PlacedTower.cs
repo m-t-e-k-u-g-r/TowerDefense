@@ -1,6 +1,6 @@
-using Game.Core.Field;
-
 namespace Game.Core.Entities.Tower;
+
+using Domain.Field;
 
 public abstract class PlacedTower(TilePosition position)
 {

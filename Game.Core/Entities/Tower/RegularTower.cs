@@ -1,6 +1,7 @@
 namespace Game.Core.Entities.Tower;
 
-using Field;
+using Domain.Entities.Tower;
+using Domain.Field;
 
 public class RegularTower(TowerType type, int level, TilePosition position) : PlacedTower(position)
 {

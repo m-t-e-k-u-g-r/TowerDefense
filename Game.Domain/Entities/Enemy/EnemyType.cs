@@ -1,4 +1,4 @@
-namespace Game.Core.Entities.Enemy;
+namespace Game.Domain.Entities.Enemy;
 
 public class EnemyType(Guid id, string name, int maxHealth, float moveSpeed, float evasion, int reward)
 {

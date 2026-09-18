@@ -1,4 +1,4 @@
-namespace Game.Core.Entities.Tower;
+namespace Game.Domain.Entities.Tower;
 
 public class TowerLevel(int cost, float damage, float range, float fireRate)
 {
